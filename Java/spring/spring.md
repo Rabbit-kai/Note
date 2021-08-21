@@ -1,3 +1,8 @@
+---
+typora-root-url: ..\..\pic
+typora-copy-images-to: ..\..\pic
+---
+
 ![img](D:\有道云笔记\qq821EC4C700D460DF734F9EC9C5C0C72B\8001ed1abf0d47caa60a1cf843453389\clipboard.png)
 
 # 1、注入bean：
