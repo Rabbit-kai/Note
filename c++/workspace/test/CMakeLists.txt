@@ -10,7 +10,7 @@ add_executable(test main.cpp)  #将名为 main.cpp 的源文件编译成一个�
 # 并将名称保存到 DIR_SRCS 变量
 #aux_source_directory(. DIR_SRCS)
 # 指定生成目标
-#add_executable(Demo ${DIR_SRCS})
+#add_executable(Demo ${DIR_SRCS})   
 
 
 
