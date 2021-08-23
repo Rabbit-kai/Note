@@ -111,9 +111,9 @@ typora-copy-images-to: ..\..\pic
 
 在类
 
-![](C:\Users\47405\AppData\Roaming\Typora\typora-user-images\image-20210805221010017.png)
+![](E:\Note\Java\spring\springbatch.pic\image-20210805221010017.png)
 
-![](C:\Users\47405\AppData\Roaming\Typora\typora-user-images\image-20210805221041549.png)
+![](E:\Note\Java\spring\springbatch.pic\image-20210805221041549.png)
 
 
 
@@ -179,7 +179,7 @@ typora-copy-images-to: ..\..\pic
 
 @profile("环境名")使用时，需要在参数中进行激活，激活哪个，哪个就生效：
 
-![image-20210814164824758](C:\Users\47405\AppData\Roaming\Typora\typora-user-images\image-20210814164824758.png)
+![image-20210814164824758](E:\Note\Java\spring\springbatch.pic\image-20210814164824758.png)
 
 
 
@@ -189,7 +189,7 @@ typora-copy-images-to: ..\..\pic
 
 
 
-![image-20210814170540319](C:\Users\47405\AppData\Roaming\Typora\typora-user-images\image-20210814170540319.png)
+![image-20210814170540319](E:\Note\Java\spring\springbatch.pic\image-20210814170540319.png)
 
 
 
