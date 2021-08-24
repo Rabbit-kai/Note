@@ -1,9 +1,4 @@
----
-typora-root-url: ..\..\pic
-typora-copy-images-to: ..\..\pic
----
-
-![img](D:\有道云笔记\qq821EC4C700D460DF734F9EC9C5C0C72B\8001ed1abf0d47caa60a1cf843453389\clipboard.png)
+![clipboard1](E:\Note\Java\spring\spring.pic\clipboard1.png)))
 
 # 1、注入bean：
 
@@ -31,7 +26,7 @@ typora-copy-images-to: ..\..\pic
 
 若使用第二种带注解的类配置，则需要在配置类中增加@bean注解来实现xml中的配置操作，如下：
 
-![img](D:\有道云笔记\qq821EC4C700D460DF734F9EC9C5C0C72B\c321c716aa86403a8409edaa55b4fcdd\clipboard.png)
+![img](E:\Note\Java\spring\spring.pic\clipboard.png)
 
 该带有@Bean标签的方法，会将返回值通过标签放入IOC容器中，供调用。
 
@@ -43,7 +38,7 @@ typora-copy-images-to: ..\..\pic
 
 取bean：
 
-![img](D:\有道云笔记\qq821EC4C700D460DF734F9EC9C5C0C72B\5679afb742c8462689cb79486f86e9c6\clipboard.png)
+![img](E:\Note\Java\spring\spring.pic\clipboard-16298153804043.png)
 
 1、通过
 
