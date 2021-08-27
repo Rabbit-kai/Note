@@ -1,4 +1,4 @@
-ToolSet: 16.0 (local)@D:\vscommunity\Community
-Options: 
+ToolSet: 15.0 (local)@D:\vs2017community\vs2017
+Options: msvc.arch=x86
 
 Options:
