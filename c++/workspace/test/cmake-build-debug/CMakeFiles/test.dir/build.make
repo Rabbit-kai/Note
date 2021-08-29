@@ -33,10 +33,10 @@ NULL=nul
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = D:\jetbrain\Toolbox\apps\CLion\ch-0\212.4746.93\bin\cmake\win\bin\cmake.exe
+CMAKE_COMMAND = D:\jetbrain\apps\CLion\ch-0\212.4746.93\bin\cmake\win\bin\cmake.exe
 
 # The command to remove a file.
-RM = D:\jetbrain\Toolbox\apps\CLion\ch-0\212.4746.93\bin\cmake\win\bin\cmake.exe -E rm -f
+RM = D:\jetbrain\apps\CLion\ch-0\212.4746.93\bin\cmake\win\bin\cmake.exe -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -58,19 +58,19 @@ include CMakeFiles\test.dir\flags.make
 CMakeFiles\test.dir\main.cpp.obj: CMakeFiles\test.dir\flags.make
 CMakeFiles\test.dir\main.cpp.obj: ..\main.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=E:\Note\c++\workspace\test\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test.dir/main.cpp.obj"
-	D:\vscommunity\Community\VC\Tools\MSVC\14.29.30133\bin\Hostx86\x86\cl.exe @<<
+	D:\vs2017community\vs2017\VC\Tools\MSVC\14.16.27023\bin\Hostx86\x86\cl.exe @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\test.dir\main.cpp.obj /FdCMakeFiles\test.dir\ /FS -c E:\Note\c++\workspace\test\main.cpp
 <<
 
 CMakeFiles\test.dir\main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test.dir/main.cpp.i"
-	D:\vscommunity\Community\VC\Tools\MSVC\14.29.30133\bin\Hostx86\x86\cl.exe > CMakeFiles\test.dir\main.cpp.i @<<
+	D:\vs2017community\vs2017\VC\Tools\MSVC\14.16.27023\bin\Hostx86\x86\cl.exe > CMakeFiles\test.dir\main.cpp.i @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E E:\Note\c++\workspace\test\main.cpp
 <<
 
 CMakeFiles\test.dir\main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test.dir/main.cpp.s"
-	D:\vscommunity\Community\VC\Tools\MSVC\14.29.30133\bin\Hostx86\x86\cl.exe @<<
+	D:\vs2017community\vs2017\VC\Tools\MSVC\14.16.27023\bin\Hostx86\x86\cl.exe @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\test.dir\main.cpp.s /c E:\Note\c++\workspace\test\main.cpp
 <<
 
@@ -85,7 +85,7 @@ test.exe: CMakeFiles\test.dir\main.cpp.obj
 test.exe: CMakeFiles\test.dir\build.make
 test.exe: CMakeFiles\test.dir\objects1.rsp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=E:\Note\c++\workspace\test\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable test.exe"
-	D:\jetbrain\Toolbox\apps\CLion\ch-0\212.4746.93\bin\cmake\win\bin\cmake.exe -E vs_link_exe --intdir=CMakeFiles\test.dir --rc=D:\WINDOW~1\10\bin\100190~1.0\x86\rc.exe --mt=D:\WINDOW~1\10\bin\100190~1.0\x86\mt.exe --manifests -- D:\vscommunity\Community\VC\Tools\MSVC\14.29.30133\bin\Hostx86\x86\link.exe /nologo @CMakeFiles\test.dir\objects1.rsp @<<
+	D:\jetbrain\apps\CLion\ch-0\212.4746.93\bin\cmake\win\bin\cmake.exe -E vs_link_exe --intdir=CMakeFiles\test.dir --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100177~1.0\x86\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100177~1.0\x86\mt.exe --manifests -- D:\vs2017community\vs2017\VC\Tools\MSVC\14.16.27023\bin\Hostx86\x86\link.exe /nologo @CMakeFiles\test.dir\objects1.rsp @<<
  /out:test.exe /implib:test.lib /pdb:E:\Note\c++\workspace\test\cmake-build-debug\test.pdb /version:0.0 /machine:X86 /debug /INCREMENTAL /subsystem:console  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib 
 <<
 
