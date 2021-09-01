@@ -23,10 +23,11 @@ public class Main {
 //        baseTest.commpara();
 
         //Optional练习
-        baseTest.OptionalTest(list.get(0));
-        baseTest.OptionalTest(new Student());
+//        baseTest.OptionalTest(list.get(0));
+//        baseTest.OptionalTest(new Student());
 
-
+        //list练习
+        baseTest.listtest();
 
     }
 }

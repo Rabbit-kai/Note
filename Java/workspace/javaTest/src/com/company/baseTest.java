@@ -7,6 +7,19 @@ import java.util.Optional;
 
 public class baseTest {
 
+    public static void listtest(){
+        List<Student> li = new ArrayList();
+        for (Student l:li){
+            l.getName();
+            System.out.println("null list");
+        }
+
+
+        if (li.isEmpty()){
+            System.out.println("空list111");
+        }
+    }
+
     public static void OptionalTest(Student stu) {
         System.err.println("正常写法");
         if (stu.getName() != null) {
