@@ -11,7 +11,19 @@ public class baseTest {
         List<String> strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl","abc","abd","bcd","bed");
         System.out.println("before : " + strings);
         System.out.println("after->filter : " + strings.stream().filter(string -> !string.isEmpty()));
-        System.out.println("after->filter-> sorted() ->collect: " + strings.stream().filter(string -> !string.isEmpty()).sorted().collect(Collectors.toList()));
+        System.out.println("after->filter-> sorted(顺序) ->collect: " + strings.stream().filter(string -> !string.isEmpty()).sorted().collect(Collectors.toList()));
+        System.out.println("after->filter-> sorted(Comparator 倒序) ->collect: " + strings.stream().filter(string -> !string.isEmpty()).sorted(
+                (o1, o2) -> {
+                    if (o1.compareTo(o2) > 1){
+                        return -1;
+                    }else if (o1.compareTo(o2) < 1){
+                        return 1;
+                    }else {
+                        return 0;
+                    }
+                }
+        ).collect(Collectors.toList()));
+
         System.out.println("after->filter-> Collectors.toList(): " + strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList()));
         System.out.println("after->filter-> Collectors.joining : " + strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.joining("||")));
         System.out.println("after->filter-> Collectors.toList()-> forEach: ");
@@ -29,9 +41,10 @@ public class baseTest {
 //        stringStream.forEach(System.out::println);
 
         //filter：过滤流中的某些元素
-        //limit(n)：获取n个元素
-        //skip(n)：跳过n元素，配合limit(n)可实现分页
+        //limit(n)：获取n个元素(限制元素数)
+        //skip(n)：跳过n元素，从n+1开始到最后，配合limit(n)可实现分页
         //distinct：通过流中元素的 hashCode() 和 equals() 去除重复元素
+        System.out.println("after->filter-> distinct->skip ->limit->joining " + strings.stream().filter(string -> !string.isEmpty()).distinct().skip(2).limit(2).collect(Collectors.joining("||")));
         Stream<Integer> streams = Stream.of(6, 4, 6, 7, 3, 9, 8, 10, 12, 14, 14);
         Stream<Integer> newStream = streams.filter(s -> s > 5) //6 6 7 9 8 10 12 14 14
                 .distinct() //6 7 9 8 10 12 14
@@ -39,6 +52,34 @@ public class baseTest {
                 .limit(2); //9 8
         newStream.forEach(System.out::println);
 
+        List<String> names= Arrays.asList("a","one","two","three","four");
+        names.stream()
+                .filter(s -> s.length() > 2)
+                .map(String::toUpperCase)
+                .forEach(System.out::println);
+
+        /*映射
+            map:接收一个函数作为参数，该函数会被应用的每个元素上，并将其映射成一个新的元素
+            flatMap： 接收一个函数，将流中的每一个值都变成一个流，然后把所有的流连城一个流
+        */
+        List<String> list = Arrays.asList("a,b,c", "1,2,2");
+        Stream<String> streamss = list.stream().map(s->s.replaceAll(",", ""));
+        System.out.println("map--------------");
+        streamss.forEach(System.out::println);
+        /**
+         * 输出 abc 122
+         */
+        System.out.println("flatMap--------------");
+        Stream<String> stream2 = list.stream().flatMap(s->{
+            String [] split = s.split(",");
+            Stream<String> stream1 = Arrays.stream(split);
+            return stream1;
+        });
+        stream2.forEach(System.out::println);
+
+        /**
+         * 输出 a b c 1 2 2
+         */
 
     }
 
@@ -76,10 +117,7 @@ public class baseTest {
         });
     }
 
-
-
-    public static void commpara(){
-        // write your code here
+    public static List<Student> students(){
         List<Student> list = new ArrayList<Student>();
         list.add(new Student(1, "zhangsna", 1));
         list.add(new Student(2, "adafasf", 1));
@@ -91,7 +129,13 @@ public class baseTest {
         list.add(new Student(7, "asdasfaf", 1));
         list.add(new Student(1, "asdasfaf", 1));
         list.add(new Student(87, "asdasfaf", 1));
+        return list;
+    }
 
+
+    public static void commpara(){
+        // write your code here
+        List<Student> list = students();
 
         // 排序：先按名称排序，再按学号排序
 //        Collections.sort(list);  对自定义类使用时，如果没有对该类实现Comparable接口，否则报错
