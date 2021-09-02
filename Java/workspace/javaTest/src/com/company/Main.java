@@ -29,5 +29,13 @@ public class Main {
         //list练习
         baseTest.listtest();
 
+        //stream test
+        baseTest.stream();
+
+
+
+
+
+
     }
 }

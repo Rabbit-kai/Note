@@ -1,11 +1,47 @@
 package com.company;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class baseTest {
+
+    public static void stream(){
+        List<String> strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl","abc","abd","bcd","bed");
+        System.out.println("before : " + strings);
+        System.out.println("after->filter : " + strings.stream().filter(string -> !string.isEmpty()));
+        System.out.println("after->filter-> sorted() ->collect: " + strings.stream().filter(string -> !string.isEmpty()).sorted().collect(Collectors.toList()));
+        System.out.println("after->filter-> Collectors.toList(): " + strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList()));
+        System.out.println("after->filter-> Collectors.joining : " + strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.joining("||")));
+        System.out.println("after->filter-> Collectors.toList()-> forEach: ");
+        strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList()).forEach(string->System.out.print("  "+string));
+        System.out.println();
+        System.out.println("after->filter-> distinct ->Collectors.toList: " + strings.stream().filter(string -> !string.isEmpty()).distinct().collect(Collectors.toList()));
+
+        //Stream of():返回元素的顺序流、iterate():第一个参数是初始值，第二个参数是一个方法，对每个元素进行操作得到新值、generate():返回无限无序流
+        Stream<Integer> stream = Stream.iterate(0,(x)->x+2).limit(5);
+//        stream.forEach(System.out::println);
+
+        //分割字符流
+        Pattern pattern = Pattern.compile(",");
+        Stream<String> stringStream = pattern.splitAsStream("a,b,c,d");
+//        stringStream.forEach(System.out::println);
+
+        //filter：过滤流中的某些元素
+        //limit(n)：获取n个元素
+        //skip(n)：跳过n元素，配合limit(n)可实现分页
+        //distinct：通过流中元素的 hashCode() 和 equals() 去除重复元素
+        Stream<Integer> streams = Stream.of(6, 4, 6, 7, 3, 9, 8, 10, 12, 14, 14);
+        Stream<Integer> newStream = streams.filter(s -> s > 5) //6 6 7 9 8 10 12 14 14
+                .distinct() //6 7 9 8 10 12 14
+                .skip(2) //9 8 10 12 14
+                .limit(2); //9 8
+        newStream.forEach(System.out::println);
+
+
+    }
+
 
     public static void listtest(){
         List<Student> li = new ArrayList();
@@ -13,11 +49,13 @@ public class baseTest {
             l.getName();
             System.out.println("null list");
         }
-
-
+        //isEmpty是判断的list的大小，不是有无
         if (li.isEmpty()){
             System.out.println("空list111");
         }
+        //当非基本类型赋值为null时，会报空指针，new了空对象时不会。
+        List<Student> a = null;
+//        System.out.println(a.get(0).getName());
     }
 
     public static void OptionalTest(Student stu) {
