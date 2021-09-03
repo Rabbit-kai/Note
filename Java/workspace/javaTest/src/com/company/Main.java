@@ -2,6 +2,7 @@ package com.company;
 
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -15,16 +16,10 @@ public class Main {
 //        baseTest.OptionalTest(new Student());
 
         //list练习
-        baseTest.listtest();
+//        baseTest.listtest();
 
         //stream test
         baseTest.stream();
-
-
-
-
-
-
     }
 
     private void qw(Student student) {

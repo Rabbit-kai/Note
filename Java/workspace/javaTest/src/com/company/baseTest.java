@@ -23,9 +23,12 @@ public class baseTest {
                     }
                 }
         ).collect(Collectors.toList()));
-
+        //装成list  转成set： toSet()  转为map：toMap(Student::getName, Student::getAge)
         System.out.println("after->filter-> Collectors.toList(): " + strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList()));
+        //字符串分隔符连接
         System.out.println("after->filter-> Collectors.joining : " + strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.joining("||")));
+
+
         System.out.println("after->filter-> Collectors.toList()-> forEach: ");
         strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList()).forEach(string->System.out.print("  "+string));
         System.out.println();
@@ -81,6 +84,75 @@ public class baseTest {
          * 输出 a b c 1 2 2
          */
 
+        /*
+         * 聚合操作  当返回值为Optional类型时，需要用get()来获取返回值中的数据入 maxBy minBy reduce
+         * 1.Collectors.counting() 计数
+         * 2.maxBy() minBy()最大最小
+         * 3.summingInt()/summingLong()/summingDouble() 求和功能
+         * 4.averagingDouble()/averagingInt()/averagingLong() 求平均值
+         * 5.groupingBy() 分组group by
+         * 6.collect(Collectors.groupingBy(Student::getType, Collectors.groupingBy(Student::getAge)))
+         * 7.partitioningBy(v -> v.getAge() > 10) 根据条件分区，分成多个部分
+         * 8.reducing(Integer::sum) 规约  collectors下为reducing，stream中为reduce
+         *   reduce(accumulator)
+         *   reduce(identity,accumulator)
+         *   reduce(identity,accumulator,combiner)  //dentity是reduce进行迭代操作的初始值。accumulator是用来迭代的。combiner是并发时用来合并各线程结果的
+         *
+         * */
+
+        /**
+         * reduce三种形态
+         * 1、Optional accResult = Stream.of(1, 2, 3, 4).reduce((acc, item) -> acc + item)  //这个方法返回值类型是Optiona
+         */
+        //拆分解释：
+        System.out.println("-----------reduce第一种----------------");
+
+        Optional accResult = Stream.of(1, 2, 3, 4)
+                .reduce((acc, item) -> {
+                    System.out.println("每次循环的初始值(上次计算后的结果值)：acc : "  + acc);
+                    acc += item;
+                    System.out.println("本次循环的元素item: " + item);
+                    System.out.println("acc+ : "  + acc);
+                    System.out.println("--------");
+                    return acc;
+                });
+        System.out.println("accResult: " + accResult.get());
+        System.out.println("---------------------------");
+
+        /**
+         * 第二种会接受一个identity参数，用来指定Stream循环的初始值。如果Stream为空，就直接返回该值。另一方面，该方法不会返回Optional，因为该方法不会出现null。
+         * 2、int accResult = Stream.of(1, 2, 3, 4).reduce(100,(acc, item) -> acc + item)
+         */
+        System.out.println("accResult: " + accResult.get());
+
+        Stream.of(1, 2, 3, 4)
+                .reduce(0, (acc, item) -> {
+                    System.out.println("acc : "  + acc);
+                    acc += item;
+                    System.out.println("item: " + item);
+                    System.out.println("acc+ : "  + acc);
+                    System.out.println("--------");
+                    return acc;
+                });
+
+        // reduce
+        System.out.println(Stream.of(1, 2, 3, 4).reduce(100, (sum, item) -> sum + item));
+        int b = Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(0, (acc, x) -> acc + x);
+        int c = Stream.of(2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(1, (acc, x) -> acc + x);
+        int d = Stream.of(2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(1, (acc, x) -> acc + x, (x, y) -> x + y - 1);
+        System.out.printf("初始值个数不影响结果：%d\n", b);
+        System.out.printf("无修正:%d\n", c);
+        System.out.printf("合并修正:%d\n", d);
+
+
+        /**
+         * map
+         */
+        Stream<String> s = Stream.of("test", "t1", "t2", "teeeee", "aaaa");
+//        s.map(n -> n.concat(".txt")).forEach(System.out::println);
+
+        s.flatMap(n -> Stream.of(n.split(""))).forEach(System.out::println);
+        s.map(n -> Stream.of(n.split(""))).forEach(System.out::println);
     }
 
 
