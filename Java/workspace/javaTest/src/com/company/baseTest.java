@@ -148,11 +148,24 @@ public class baseTest {
         /**
          * map
          */
-        Stream<String> s = Stream.of("test", "t1", "t2", "teeeee", "aaaa");
-//        s.map(n -> n.concat(".txt")).forEach(System.out::println);
+        List<String> list1 = Arrays.asList("a,b,c", "1,2,3");
 
-        s.flatMap(n -> Stream.of(n.split(""))).forEach(System.out::println);
-        s.map(n -> Stream.of(n.split(""))).forEach(System.out::println);
+        //将一个String类型的Stream对象中的每个元素添加相同的后缀.txt，如a变成a.txt
+        Stream<String> s = Stream.of("test", "t1", "t2", "teeeee", "aaaa");
+        s.map(n -> n.concat(".txt")).forEach(System.out::println);
+
+        Stream<String> s3 = list1.stream().flatMap(ss -> {
+            //将每个元素转换成一个stream(stream中有多个元素)
+            String[] split = ss.split(",");
+            Stream<String> s2 = Arrays.stream(split);
+            return s2;
+        });
+        s3.forEach(System.out::println);
+
+
+
+
+
     }
 
 

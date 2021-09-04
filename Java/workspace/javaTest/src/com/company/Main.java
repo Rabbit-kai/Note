@@ -19,7 +19,7 @@ public class Main {
 //        baseTest.listtest();
 
         //stream test
-        baseTest.stream();
+
     }
 
     private void qw(Student student) {
