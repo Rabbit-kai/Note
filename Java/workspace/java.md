@@ -1,10 +1,10 @@
-### **Object... 的用法：**
+# **Object... 的用法：**
 
 Object ...objects(称为可变个数的形参)这种参数定义是在不确定方法参数的情况下的一种多态表现形式。即这个方法可以传递多个参数，这个参数的个数是不确定的。这样你在方法体中需要相应的做些处理。因为Object是基类，所以使用Object ...objects这样的参数形式，允许一切继承自Object的对象作为参数。
 
 Object[] obj这样的形式，就是一个Object数组构成的参数形式。说明这个方法的参数是固定的，是一个Object数组，至于这个数组中存储的元素，可以是继承自Object的所有类的对象。
 
-### **多态**
+# **多态**
 
 所以对于多态我们可以总结如下：
 
@@ -14,9 +14,312 @@ Object[] obj这样的形式，就是一个Object数组构成的参数形式。�
 
 a只能调用子类和父类公有的方法和变量，无法调用子类中单独定义的变量和方法。
 
-### **排序**
+# Collections&Collector
 
-#### 一、工具类Collections
+## Collection：
+
+​	集合的顶级接口，List和Set等都会实现该接口。
+
+## Collections：
+
+​	是集合的工具类，用于操作集合类。本身没有实现Collection接口，而是内部类实现了Collection接口，它的作用就是封装常用的集合操作。
+
+1） 排序（Sort）
+      使用sort方法可以根据元素的自然顺序 对指定列表按升序进行排序。列表中的所有元素都必须实现 Comparable 接口。此列表内的所有元素都必须是使用指定比较器可相互比较的。
+
+**该方法有两个用法：**
+
+​	**1、使用默认排序，只需传入排序的对象即可；**
+
+​	**2、使用自定义排序器，需额外传入一个Comparator对象。**
+
+```java
+      List<Integer> list = new LinkedList<Integer>();
+		int array[] = { 112, 111, 23, 456, 231 };
+		for (int i = 0; i < array.length; i++) {
+			list.add(new Integer(array[i]));
+		}
+		Collections.sort(list); //默认排序
+		Collections.sort(list,new Comparator<Integer>(){ //自定义排序规则
+            @Override
+       		 public int compare(Integer o1, Integer o2) { 
+       		 return o2 - o1;
+        })
+		for (int i = 0; i < array.length; i++) {
+			System.out.print(list.get(i)+"");
+		}
+```
+
+结果：23,111,112,231,456,
+2） 混排（Shuffling）
+     混排算法所做的正好与 sort 相反： 它打乱在一个 List 中可能有的任何排列的踪迹。也就是说，基于随机源的输入重排该 List，这样的排列具有相同的可能性（假设随机源是公正的）。这个算法在实现一个碰运气的游戏中是非常有用的。例如，它可被用来混排代表一副牌的 Card 对象的一个 List .另外，在生成测试案例时，它也是十分有用的。
+
+```java
+Collections.Shuffling(list)
+List<Integer> list = new ArrayList<Integer>();
+		int array[] = { 112, 111, 23, 456, 231 };
+		for (int i = 0; i < array.length; i++) {
+			list.add(new Integer(array[i]));
+		}
+		Collections.shuffle(list);
+		for (int i = 0; i < array.length; i++) {
+			System.out.print(list.get(i) + ",");
+		}
+//结果：112,111,23,456,231   112,231,111,456,23,      随机的。
+```
+
+3） 反转（Reverse）
+     使用Reverse方法可以根据元素的自然顺序 对指定列表按降序进行排序。
+
+```java
+Collections.reverse(list)
+List<Double> list = new ArrayList<Double>();
+		double array[] = {112, 111, 23, 456, 231 };
+		for (int i = 0; i < array.length; i++) {
+		list.add(new Double(array[i]));
+		}
+		Collections. reverse (list);
+		for (int i = 0; i < array.length; i++) {
+		System.out.print(list.get(i)+",");
+		}
+//结果：231.0,456.0,23.0,111.0,112.0,  结果反转反转。
+```
+
+4） 替换所有的元素（Fill）
+使用指定元素替换指定列表中的所有元素。
+
+```java
+String str[] = { "dd", "aa", "bb", "cc", "ee" };
+		List<String> list = new ArrayList<String>();
+		for (int j = 0; j < str.length; j++) {
+			list.add(str[j]);
+		}
+		Collections.fill(list, "aaa");
+		for (int i = 0; i < list.size(); i++) {
+			System.out.print("list[" + i + "]=" + list.get(i)+",");
+
+​	}
+```
+
+结果：list[0]=aaa,list[1]=aaa,list[2]=aaa,list[3]=aaa,list[4]=aaa,
+5） 拷贝（Copy）
+用两个参数，一个目标 List 和一个源 List， 将源的元素拷贝到目标，并覆盖它的内容。目标 List 至少与源一样长。如果它更长，则在目标 List 中的剩余元素不受影响。
+Collections.copy（list，li）： 后面一个参数是目标列表 ，前一个是源列表
+
+```java
+	double array[] = { 112, 111, 23, 456, 231 };
+​		List<Double> list = new ArrayList<Double>();
+​		List<Double> li = new ArrayList<Double>();
+​		for (int i = 0; i < array.length; i++) {
+​			list.add(new Double(array[i]));
+​		}
+​		double arr[] = { 1131, 333 };
+​		for (int j = 0; j < arr.length; j++) {
+​			li.add(new Double(arr[j]));
+​		}
+​		Collections.copy(list, li);
+​		list.forEach(x->System.out.print(x)+",   ")
+
+//结果：1131.0,  333.0,  23.0,  456.0,  231.0,  
+```
+
+6） 返回Collections中最小元素（min） 最小元素（max）
+根据指定比较器产生的顺序，返回给定 collection 的最小(大)元素。collection 中的所有元素都必须是通过指定比较器可相互比较的。
+
+```java
+Collections.min(list)  Collections.max(list)
+	Integer[] array = { 112, 222, 23, 456, 231 };
+		List<Integer> list =new ArrayList<Integer>();
+	    for (Integer integer : array) {
+	    	list.add(integer);
+		}
+		System.out.println(Collections.min(list));
+		System.out.println(Collections.max(list));
+//结果：23  456
+```
+
+8） lastIndexOfSubList
+返回指定源列表中最后一次出现指定目标列表的起始位置，即按从后到前的顺序返回子List在父List中的索引位置。
+
+9） IndexOfSubList
+返回指定源列表中第一次出现指定目标列表的起始位置
+
+10） Rotate
+根据指定的距离循环移动指定列表中的元素
+Collections.rotate（list，-1）；
+如果是负数，则正向移动，正数则方向移动
+
+11)static int binarySearch(List list,Object key)
+   使用二分搜索查找key对象的索引值，因为使用的二分查找，所以前提是必须有序。
+12)static Object max(Collection coll)
+   根据元素自然顺序，返回集合中的最大元素
+13)static Object max(Collection coll,Compare comp)
+   根据Comparator指定的顺序，返回给定集合中的最大元素
+14)static Object min(Collection coll)
+   根据元素自然顺序，返回集合中的最小元素
+15)static Object min(Collection coll,Compare comp)
+   根据Comparator指定的顺序，返回给定集合中的最小元素
+16）static void fill(List list,Object obj)
+   使用指定元素替换指定集合中的所有元素
+17）static int frequency(Collection c,Object o)
+   返回指定元素在集合中出现在次数
+18）static int indexOfSubList(List source, List target)
+   返回子List对象在父List对象中第一次出现的位置索引； 如果父List中没有出现这样的子List，则返回-1
+19）static int lastIndexOfSubList(List source,List target)
+   返回子List对象在父List对象中最后一次出现的位置索引，如果父List中没有出现这样的子List，刚返回-1
+20）static boolean replaceAll(List list,Object oldVal,Object newVal)
+  使用一个新值newVal替换List对象所有旧值oldVal
+21）synchronizedXXX(new XXX)
+      Collections类为集合类们提供的同步控制方法
+
+```java
+public class SynchronizedTest
+{
+      public static void main(String[] args){
+            Collection collection = Collections.synchronizedCollections(new ArrayList());
+            List list = Collections.synchronizedList(new ArrayList());
+            Set s = Collections.synchronizedSet(new HashSet());
+            Map s = Collections.synchronizedMap(new HashMap()):
+      }
+}
+```
+
+22)emptyXXX()
+   返回一个空的、不可变的集合对象，此处的集合既可以是List，也可以是Set,还可以是Map。
+23）singletonXXX()
+   返回一个只包含指定对象（只有一个或一项元素）的、不可变的集合对象，此处集合既可以是List,也可以是Set,还可以是Map。
+24）unmodificableXXX()
+   指定返回集合对象的不可变视图，此处的集合既可以是Lsit,也可以是Set,Map。
+
+## Collectors：
+
+Collectors是一个收集器工具类，常用于流操作中。常用方法如下：
+
+![image-20210906214403056](E:\Note\Java\workspace\java.pic\image-20210906214403056.png)
+
+## Collector：
+
+类比上面Collections与Collection的作用，定义收集流元素的规范，流中的collect()方法传入的都是一个Collector接口，然后Collectors工具类中的方法返回值也是这个接口，这样就可以很方便的利用java8的新特性方法引用，如下的使用方式
+
+```java
+public static void main(String[] args) {
+    List<Integer> lists = Stream.of(1, 2, 3).collect(Collectors.toList());
+}
+```
+
+## Comparable: compareTo
+
+1：所有可以 “排序” 的类都实现了java.lang.Comparable接口，Comparable接口中只有一个方法。
+		2：public int compareTo(Object obj) ; // 当 this > obj时返回>0,this < obj时返回<0,this == obj时返回=0。
+		**3:实现了 Comparable 接口的类通过重写 comparaTo 方法从而确定该类对象的排序方式。在使用时可以直接通过Collections.sort(list)或者arraylist.sort(list)进行排序**
+
+```java
+if (this - o > 0){
+    return 1; //正序,同样如果 this - o < 0 return -1; 也是正序| o-this <0 return -1;也是正序...
+}else if (this - o < 0){
+    return -1; //正序
+}else{
+    return 0; //相等
+}
+```
+
+Demo：
+
+```java
+//先按no进行升序排列，no相同时按name再进行升序排列
+public int compareTo(Student o) { 
+    if (this.getNo() - o.getNo() > 0 ){
+        return 1;
+    }else if(this.getNo() - o.getNo() == 0){
+        if(this.getName().compareTo(o.getName())>0){  // 当大于时返回>0,小于时返回<0,相等时返回=0。
+            return 1;
+        }else if(this.getName().compareTo(o.getName())<0){  // 当大于时返回>0,小于时返回<0,相等时返回=0。
+            return -1;
+        }else {
+            return 0;
+        }
+    }else {
+        return -1;
+    }
+}
+
+```
+
+```java
+//定义列表并调用排序方法
+List<Student> list = new ArrayList<Student>();
+list.add(new Student(1, "zhangsna", 1));
+list.add(new Student(2, "adafasf", 1));
+list.add(new Student(3, "asffaf", 1));
+list.add(new Student(4, "gbsdgasf", 1));
+list.add(new Student(5, "asfafaf", 1));
+list.add(new Student(6, "asdasfaf", 1));
+list.add(new Student(5, "asdasfaf", 1));
+list.add(new Student(7, "asdasfaf", 1));
+list.add(new Student(1, "asdasfaf", 1));
+list.add(new Student(87, "asdasfaf", 1));
+
+Collections.sort(list);
+for (Student li:list){
+    System.out.println("no:: " + li.getNo() + "   name:: " + li.getName());
+}
+
+//结果展示
+no:: 1   name:: asdasfaf
+no:: 1   name:: zhangsna
+no:: 2   name:: adafasf
+no:: 3   name:: asffaf
+no:: 4   name:: gbsdgasf
+```
+
+
+
+## Comparator：
+
+该接口也是具有比较的功能，但该接口注重的却是比较容器，只有两个Collator, RuleBasedCollator。
+
+作为接口Comparator提供抽象方法，如下：
+
+| int     | [compare](https://www.cnblogs.com/lin-jing/p/8279205.html#compare(T, T))(T o1, T o2) 比较用来排序的两个参数。根据第一个参数小于、等于或大于第二个参数分别返回负整数、零或正整数。                                ·  返回值小于零，则不交换o1和o2的位置；返回值大于零，则交换o1和o2的位置 |
+| ------- | ------------------------------------------------------------ |
+| boolean | [equals](https://www.cnblogs.com/lin-jing/p/8279205.html#equals(java.lang.Object))(Object obj) 指示某个其他对象是否“等于”此 Comparator。 |
+
+compare
+comparing
+comparing
+comparingDouble
+comparingInt
+comparingLong
+equals
+naturalOrder
+nullsFirst
+nullsLast
+reversed
+reverseOrder
+thenComparing
+thenComparing
+thenComparing
+thenComparingDouble
+thenComparingInt
+thenComparingLong
+
+
+
+重写Comparator中的compara方法即可：
+
+```java
+Collections.sort(list,new Comparator<Integer>(){ //自定义排序规则
+            @Override
+       		 public int compare(Integer o1, Integer o2) { 
+       		 return o2 - o1;
+        })
+```
+
+
+
+# **排序**
+
+## 一、工具类Collections
 
 1、Collections.sort(List)   //只针对java已经实现Comparable接口的类基本型生效入String、Intager...，如果对自定义的类对象进行排序需要实现Comparable接口
 
@@ -61,7 +364,7 @@ Collections.sort(list,new Comparator<ListType>(){
                 return o1.getEmpno()-o2.getEmpno();
                 /*按员工编号逆序排序*/
                 //return o2.getEmpno()-o1.getEmpno();
-                /*按员工姓名正序排序*/ 对字符串进行排序时，使用comparaTo,当大于是返回>0,小于时返回<0,相等时返回=0。
+                /*按员工姓名正序排序*/ 对字符串进行排序时，使用comparaTo,当大于时返回>0,小于时返回<0,相等时返回=0。
                 //return o1.getEname().compareTo(o2.getEname());
                 /*按员工姓名逆序排序*/
                 //return o2.getEname().compareTo(o1.getEname());
@@ -87,7 +390,7 @@ Collections.sort(list,new Comparator<ListType>(){
 }})))
 ```
 
-#### 二、Comparator
+## 二、Comparator
 
 StringUtils.*join* 将数组或集合以某拼接符拼接到一起形成新的字符串。
 
@@ -320,7 +623,7 @@ Student{name='bb', age=100}
 
 ### 3.1 匹配、聚合操作
 
-​        allMatch：接收一个 Predicate 函数，当流中每个元素都符合该断言时才返回true，否则返回false
+allMatch：接收一个 Predicate 函数，当流中每个元素都符合该断言时才返回true，否则返回false
 ​        noneMatch：接收一个 Predicate 函数，当流中每个元素都不符合该断言时才返回true，否则返回false
 ​        anyMatch：接收一个 Predicate 函数，只要流中有一个元素满足该断言则返回true，否则返回false
 ​        findFirst：返回流中第一个元素
@@ -344,7 +647,7 @@ Integer max = list.stream().max(Integer::compareTo).get(); //5
 Integer min = list.stream().min(Integer::compareTo).get(); //1
 ```
 
-### 3.2 规约操作
+### 3.2 规约操作 reduce
 
 ​        Optional<T> reduce(BinaryOperator<T> accumulator)：第一次执行时，accumulator函数的第一个参数为流中的第一个元素，第二个参数为流中元素的第二个元素；第二次执行时，第一个参数为第一次函数执行的结果，第二个参数为流中的第三个元素；依次类推。
 ​        T reduce(T identity, BinaryOperator<T> accumulator)：流程跟上面一样，只是第一次执行时，accumulator函数的第一个参数为identity，而第二个参数为流中的第一个元素。

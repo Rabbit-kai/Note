@@ -2,6 +2,7 @@ package com.company;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -135,7 +136,10 @@ public class baseTest {
                     return acc;
                 });
 
-        // reduce
+        /**
+         * 第三种 第三个参数是在并行执行时使用
+         * 3、int d = Stream.of(2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(1, (acc, x) -> acc + x, (x, y) -> x + y - 1);
+         */
         System.out.println(Stream.of(1, 2, 3, 4).reduce(100, (sum, item) -> sum + item));
         int b = Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(0, (acc, x) -> acc + x);
         int c = Stream.of(2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(1, (acc, x) -> acc + x);
@@ -182,6 +186,11 @@ public class baseTest {
         //当非基本类型赋值为null时，会报空指针，new了空对象时不会。
         List<Student> a = null;
 //        System.out.println(a.get(0).getName());
+
+        List<Student> list = students();
+
+
+
     }
 
     public static void OptionalTest(Student stu) {
@@ -214,13 +223,26 @@ public class baseTest {
         list.add(new Student(7, "asdasfaf", 1));
         list.add(new Student(1, "asdasfaf", 1));
         list.add(new Student(87, "asdasfaf", 1));
+
+        Collections.sort(list);
+        for (Student li:list){
+            System.out.println("no:: " + li.getNo() + "   name:: " + li.getName());
+        }
+
+
         return list;
     }
 
 
-    public static void commpara(){
+    public static void compara(){
         // write your code here
         List<Student> list = students();
+//        Collections.sort();
+//        Collectors
+        Comparator
+//        Collection
+//        Collector
+//        Comparable
 
         // 排序：先按名称排序，再按学号排序
 //        Collections.sort(list);  对自定义类使用时，如果没有对该类实现Comparable接口，否则报错
