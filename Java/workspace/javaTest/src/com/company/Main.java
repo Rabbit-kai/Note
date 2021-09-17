@@ -18,9 +18,14 @@ public class Main {
         //list练习
 //        baseTest.listtest();
 
+        //Stream 流测试
 //        baseTest.stream();
-        baseTest.clonetest();
 
+        //clone测试
+//        baseTest.clonetest();
+
+        //基础测试
+        baseTest.base();
     }
 
 }

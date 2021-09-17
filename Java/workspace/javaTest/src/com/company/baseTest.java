@@ -8,6 +8,29 @@ import java.util.stream.Stream;
 
 public class baseTest {
 
+    public static void base(){
+        //String 传值 传址
+        String a = "hello";
+        String b = "hello";
+//        a = "Hello Java";
+
+        System.out.println("a:: "+a);
+        System.out.println("b:: "+b);
+        System.out.println(a==b);
+        System.out.println(a.equals(b));
+
+        //对象 传址
+        List<Student> list = new LinkedList<>();
+        Student stu = new Student(1, "Aa",'1');
+        list.add(stu);
+        System.out.println("before:"+list);
+        stu.setName("Bb");
+        System.out.println("list:" + list.get(0).getName());
+        System.out.println("after:"+list);
+
+    }
+
+
     public static void stream(){
         List<String> strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl","abc","abd","bcd","bed");
         System.out.println("before : " + strings);
@@ -281,20 +304,16 @@ public class baseTest {
          *① 实现Cloneable接口，这是一个标记接口，自身没有方法。
          *② 覆盖clone()方法，可见性提升为public。
          */
-        List<Student> list = new LinkedList<>();
         Student stu = new Student(1, "Aa",'1');
-        list.add(stu);
-        System.out.println("before:"+list);
+
         Student stu1 = stu.clone();
         System.out.println(stu);
         System.out.println(stu1);
-        stu.setName("Bb");
-//        System.out.println(stu);
-//        System.out.println(stu.getName());
-//        System.out.println(stu1);
-//        System.out.println(stu1.getName());
-        System.out.println("list:" + list.get(0).getName());
-        System.out.println("after:"+list);
+        System.out.println(stu);
+        System.out.println(stu.getName());
+        System.out.println(stu1);
+        System.out.println(stu1.getName());
+
 
     }
 
