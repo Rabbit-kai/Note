@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CloneNotSupportedException {
         List<Student> list = baseTest.students();
         // collection list练习
 //        baseTest.compara();
@@ -19,6 +19,7 @@ public class Main {
 //        baseTest.listtest();
 
 //        baseTest.stream();
+        baseTest.clonetest();
 
     }
 

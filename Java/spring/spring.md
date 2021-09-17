@@ -56,6 +56,12 @@
 
 3、使用@Autowire(通过Bytype的方式来进行注入)、@Qualifie('名称')(通过Byname的方式进行注入)，从IOC中获取前面放入的类。//通过类型装配只需要@Autowire；通过名称装配需要@Autowire、@Qualifie('名称')
 
+
+
+**@configuration和@component之间的区别**
+		@configuration和@component之间的区别是：@Component注解的范围最广，所有类都可以注解，但是@Configuration注解一般注解在这样的类上：这个类里面有@Value注解的成员变量和@Bean注解的方法，就是一个配置类。
+
+
 **回顾给IoC加入Bean的方法**
 	注解 ：全部在@Congiration配置类中设置：	
 		三层组件： 扫描器 + @Controller、@Service、@Repository、@Component来注入

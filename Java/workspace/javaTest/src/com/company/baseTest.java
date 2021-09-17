@@ -226,8 +226,10 @@ public class baseTest {
 
         Collections.sort(list);
         for (Student li:list){
-            System.out.println("no:: " + li.getNo() + "   name:: " + li.getName());
+//            System.out.println("no:: " + li.getNo() + "   name:: " + li.getName());
         }
+
+        Comparator<Student> comparing = Comparator.comparing(Student::getName);
 
 
         return list;
@@ -239,13 +241,13 @@ public class baseTest {
         List<Student> list = students();
 //        Collections.sort();
 //        Collectors
-        Comparator
+//        Comparator
 //        Collection
 //        Collector
 //        Comparable
 
         // 排序：先按名称排序，再按学号排序
-//        Collections.sort(list);  对自定义类使用时，如果没有对该类实现Comparable接口，否则报错
+//        Collections.sort(list);  对自定义类使用时，如果没有对该类实现Comparable接口，否则报错,入参：class::function
         list.sort(Comparator.comparing(Student::getName).thenComparing(Student::getNo));
         for (Student stu : list) {
             System.out.println("排序后list：" + stu.getName() + "      " + stu.getNo());
@@ -273,4 +275,28 @@ public class baseTest {
 //        int index = Collections.binarySearch(list.sort());
 //        System.out.println(index);
     }
+
+    public static void clonetest() throws CloneNotSupportedException {
+        /**
+         *① 实现Cloneable接口，这是一个标记接口，自身没有方法。
+         *② 覆盖clone()方法，可见性提升为public。
+         */
+        List<Student> list = new LinkedList<>();
+        Student stu = new Student(1, "Aa",'1');
+        list.add(stu);
+        System.out.println("before:"+list);
+        Student stu1 = stu.clone();
+        System.out.println(stu);
+        System.out.println(stu1);
+        stu.setName("Bb");
+//        System.out.println(stu);
+//        System.out.println(stu.getName());
+//        System.out.println(stu1);
+//        System.out.println(stu1.getName());
+        System.out.println("list:" + list.get(0).getName());
+        System.out.println("after:"+list);
+
+    }
+
+
 }

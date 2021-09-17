@@ -1,10 +1,12 @@
-# **Object... 的用法：**
+# Java基础：
+
+## **Object... 的用法：**
 
 Object ...objects(称为可变个数的形参)这种参数定义是在不确定方法参数的情况下的一种多态表现形式。即这个方法可以传递多个参数，这个参数的个数是不确定的。这样你在方法体中需要相应的做些处理。因为Object是基类，所以使用Object ...objects这样的参数形式，允许一切继承自Object的对象作为参数。
 
 Object[] obj这样的形式，就是一个Object数组构成的参数形式。说明这个方法的参数是固定的，是一个Object数组，至于这个数组中存储的元素，可以是继承自Object的所有类的对象。
 
-# **多态**
+## **多态**
 
 所以对于多态我们可以总结如下：
 
@@ -13,6 +15,107 @@ Object[] obj这样的形式，就是一个Object数组构成的参数形式。�
 父类  a = new 子类();
 
 a只能调用子类和父类公有的方法和变量，无法调用子类中单独定义的变量和方法。
+
+## 传值和传址：
+
+对于基本数据类型(整型、浮点型、字符型、布尔型等)，传值;对于引用类型(对象、数组)，传引用
+
+
+
+# lambda表达式（lambda expressions）
+
+## 基本语法
+
+匿名类型最大的问题就在于其冗余的语法。有人戏称匿名类型导致了“高度问题”（height problem）：比如前面`ActionListener`的例子里的五行代码中仅有一行在做实际工作。
+
+lambda表达式是匿名方法，它提供了轻量级的语法，从而解决了匿名内部类带来的“高度问题”。
+
+下面是一些lambda表达式：
+
+```java
+(int x, int y) -> x + y
+() -> 42
+(String s) -> { System.out.println(s); }
+```
+
+第一个lambda表达式接收`x`和`y`这两个整形参数并返回它们的和；第二个lambda表达式不接收参数，返回整数'42'；第三个lambda表达式接收一个字符串并把它打印到控制台，不返回值。
+
+lambda表达式的语法由参数列表、箭头符号`->`和函数体组成。函数体既可以是一个表达式，也可以是一个语句块：
+
+- 表达式：表达式会被执行然后返回执行结果。
+- 语句块：语句块中的语句会被依次执行，就像方法中的语句一样——
+  - `return`语句会把控制权交给匿名方法的调用者
+  - `break`和`continue`只能在循环中使用
+  - 如果函数体有返回值，那么函数体内部的每一条路径都必须返回值
+
+表达式函数体适合小型lambda表达式，它消除了`return`关键字，使得语法更加简洁。
+
+lambda表达式也会经常出现在嵌套环境中，比如说作为方法的参数。为了使lambda表达式在这些场景下尽可能简洁，我们去除了不必要的分隔符。不过在某些情况下我们也可以把它分为多行，然后用括号包起来，就像其它普通表达式一样。
+
+下面是一些出现在语句中的lambda表达式：
+
+```java
+FileFilter java = (File f) -> f.getName().endsWith("*.java");
+
+String user = doPrivileged(() -> System.getProperty("user.name"));
+
+new Thread(() -> {
+  connectToService();
+  sendNotification();
+}).start();
+```
+
+## 目标类型（Target typing）
+
+需要注意的是，函数式接口的名称并不是lambda表达式的一部分。那么问题来了，对于给定的lambda表达式，它的类型是什么？答案是：它的类型是由其上下文推导而来。例如，下面代码中的lambda表达式类型是`ActionListener`：
+
+```java
+ActionListener l = (ActionEvent e) -> ui.dazzle(e.getModifiers());
+```
+
+这就意味着同样的lambda表达式在不同上下文里可以拥有不同的类型：
+
+```java
+Callable<String> c = () -> "done";
+PrivilegedAction<String> a = () -> "done";
+```
+
+第一个lambda表达式`() -> "done"`是`Callable`的实例，而第二个lambda表达式则是`PrivilegedAction`的实例。
+
+编译器负责推导lambda表达式的类型。它利用lambda表达式所在上下文**所期待的类型**进行推导，这个**被期待的类型**被称为*目标类型*。lambda表达式只能出现在目标类型为函数式接口的上下文中。
+
+当然，lambda表达式对目标类型也是有要求的。编译器会检查lambda表达式的类型和目标类型的方法签名（method signature）是否一致。当且仅当下面所有条件均满足时，lambda表达式才可以被赋给目标类型`T`：
+
+- `T`是一个函数式接口
+- lambda表达式的参数和`T`的方法参数在数量和类型上一一对应
+- lambda表达式的返回值和`T`的方法返回值相兼容（Compatible）
+- lambda表达式内所抛出的异常和`T`的方法`throws`类型相兼容
+
+由于目标类型（函数式接口）已经“知道”lambda表达式的形式参数（Formal parameter）类型，所以我们没有必要把已知类型再重复一遍。也就是说，lambda表达式的参数类型可以从目标类型中得出：
+
+```java
+Comparator<String> c = (s1, s2) -> s1.compareToIgnoreCase(s2);
+```
+
+在上面的例子里，编译器可以推导出`s1`和`s2`的类型是`String`。此外，当lambda的参数只有一个而且它的类型可以被推导得知时，该参数列表外面的括号可以被省略：
+
+```java
+FileFilter java = f -> f.getName().endsWith(".java");
+
+button.addActionListener(e -> ui.dazzle(e.getModifiers()));
+```
+
+这些改进进一步展示了我们的设计目标：“不要把高度问题转化成宽度问题。”我们希望语法元素能够尽可能的少，以便代码的读者能够直达lambda表达式的核心部分。
+
+lambda表达式并不是第一个拥有上下文相关类型的Java表达式：泛型方法调用和“菱形”构造器调用也通过目标类型来进行类型推导：
+
+```java
+List<String> ls = Collections.emptyList();
+List<Integer> li = Collections.emptyList();
+
+Map<String, Integer> m1 = new HashMap<>();
+Map<Integer, String> m2 = new HashMap<>();
+```
 
 # Collections&Collector
 
@@ -571,7 +674,7 @@ Stream<String> s3 = list.stream().flatMap(s -> {
 s3.forEach(System.out::println); // a b c 1 2 3
 ```
 
-### 2.3 排序
+### 2.3 排序 sorted
 
 ​        sorted()：自然排序，流中元素需实现Comparable接口
 ​        sorted(Comparator com)：定制排序，自定义Comparator排序器  
@@ -599,7 +702,7 @@ studentList.stream().sorted(
 ).forEach(System.out::println);
 ```
 
-### 2.4 消费
+### 2.4 消费 peek
 
 ​        peek：如同于map，能得到流中的每一个元素。但map接收的是一个Function表达式，有返回值；而peek接收的是Consumer表达式，没有返回值。
 
@@ -850,15 +953,597 @@ o = Optional.of("test");
 
 
 
+# BinaryOperator
+
+BinaryOperator接口表示对两个相同类型的操作数的运算，并产生与该操作数相同类型的结果。
+
+| 修饰符和类型                          | 方法和说明                                                   |
+| :------------------------------------ | :----------------------------------------------------------- |
+| maxBy（Comparator <？super T>比较器） | 返回BinaryOperator，该BinaryOperator根据指定的Comparator返回两个元素中的较大者。 |
+| minBy（Comparator <？super T>比较器） | 返回一个BinaryOperator，它根据指定的Comparator返回两个元素中的较小者 |
+
+## 基本应用
+
+```java
+import java.util.function.BinaryOperator;
+public class Demo {
+   public static void main(String args[]) {
+      BinaryOperator<Integer> operator = (x, y) -> x * y; //定义一个操作
+      System.out.println(operator.apply(5, 7)); //使用该操作进行计算
+   }
+}
+```
+
+## BinaryOperator::maxBy()和BinaryOperator.minBy()
+
+```java
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+
+public class Java8BinaryOperator1 {
+
+​    public static void main(String[] args) {
+
+​        // BiFunction
+​        BiFunction<Integer, Integer, Integer> func = (x1, x2) -> x1 + x2;
+
+​        Integer result = func.apply(2, 3);
+
+​        System.out.println(result); // 5
+
+​        // BinaryOperator
+​        BinaryOperator<Integer> func2 = (x1, x2) -> x1 + x2;
+
+​        Integer result2 = func.apply(2, 3);
+
+​        System.out.println(result2); // 5
+
+​    }
+}
+```
+
+# 注解：
+
+## @Cacheable ：
+
+注解在方法上，表示该方法的返回结果是可以缓存的。也就是说，该方法的返回结果会放在缓存中，以便于以后使用相同的参数调用该方法时，会返回缓存中的值，而不会实际执行该方法。
+
+包含参数：cacheNames & value、key & keyGenerator、sync、condition&unless
+
+### cacheNames & value
+
+用来指定缓存名字，二选其一即可：@Cacheable("menu")
+
+@Cacheable 支持同一个方法关联多个缓存。这种情况下，当执行方法之前，这些关联的每一个缓存都会被检查，而且只要至少其中一个缓存命中了，那么这个缓存中的值就会被返回：@Cacheable({"menu", "menuById"})
+
+### key & keyGenerator
+
+一个缓存名对应一个被注解的方法，但是一个方法可能传入不同的参数，使用key进行区分 。
+
+显示指定key：
+
+```
+@Cacheable(value = {"menuById"}, key = "#id")
+@Cacheable(value = {"menuById"}, key = "'id-' + #menu.id")
+@Cacheable(value = {"menuById"}, key = "'hash' + #menu.hashCode()")
+```
+
+如果不使用key进行指定，则会默认使用keyGenerator根据参数来生成key
+
+### sync
+
+sync = true ，可以在多线程中，防止不同线程重复查询数据库，避免缓存击穿。
+
+### condition&unless
+
+condition：调用前判断，缓存的条件。接收一个结果为 true 或 false 的表达式，表达式同样支持 SpEL 。**如果表达式结果为 true，则调用方法时会执行正常的缓存逻辑**，**否则，调用方法时就好像该方法没有声明缓存一样**
+
+```
+@Cacheable(value = {"menuById"}, key = "#id", condition = "#conditionValue > 1")  //限制conditionValue大于1时才能将return值进行缓存
+public Menu findById(String id, Integer conditionValue) {。。。}
+```
+
+unless：执行后判断，不缓存的条件；unless 接收一个结果为 true 或 false 的表达式，表达式支持 SpEL。**当结果为 true 时，不缓存**。
+
+unless 条件就是在方法执行完毕后调用，所以它不会影响方法的执行，但是只有满足表达式为false时，才会将结果缓存。
+
+```
+@Cacheable(value = {"menuById"}, key = "#id", unless = "#result.type == 'folder'")
+public Menu findById(String id) {
+```
 
 
 
+condition VS unless
+
+　　　　**condition 不指定相当于 true，unless 不指定相当于 false**
+
+　　　　**当 condition = false，一定不会缓存；**
+
+　　　　**当 condition = true，且 unless = true，不缓存；**
+
+　　　　**当 condition = true，且 unless = false，缓存；**
+
+## @Conditional
+
+s
 
 
 
+## @ConditionalOnProperty
 
 
 
+f 
+
+## **@PostConstruct**
+
+@PostConstruct注解好多人以为是Spring提供的。其实是Java自己的注解。
+
+Java中该注解的说明：@PostConstruct该注解被用来修饰一个非静态的void（）方法。被@PostConstruct修饰的方法会在服务器加载Servlet的时候运行，并且只会被服务器执行一次。PostConstruct在构造函数之后执行，init（）方法之前执行。
+
+通常我们会是在Spring框架中使用到@PostConstruct注解 该注解的方法在整个Bean初始化中的执行顺序：
+
+Constructor(构造方法) -> @Autowired(依赖注入) -> @PostConstruct(注释的方法)
+
+## **@Value**
+
+@Value的值有两类：
+
+① ${ property : default_value }
+
+② #{ obj.property? :default_value } 
+
+第一个注入的是外部配置文件对应的property 在使用Springboot项目搭建的项目时，配置文件application.properties中，已经被加载到了项目中,在项目中可以通过该注解获取配置文件中的信息
+
+第二个则是SpEL表达式对应的内容。
+
+default_value，是前面的值为空时的默认值。注意二者的不同，#{}里面那个obj代表对象。
+
+**demo：**
+
+1、假如配置文件中有个配置信息为 --->spring.jpa.database=mysql。
+
+2、实体类获取配置信息
+
+```java
+@Component
+public class UserBean implements Serializable {
+	private static final 1ong serialVersionUID = 1L ;
+	@Value("${spring.jpa.database}")
+	private String name;
+	public final String getName() {
+		return name ;
+	}
+	public final void setName(String name) {
+		this.name = name;
+	}
+}
+```
+
+3、在控制层中使用@Value("#{}")注解获取参数：
+
+```java
+@Component
+public class UserBean implements Serializable {
+	private static final 1ong serialVersionUID = 1L;
+	@Value("${spring.jpa.database}")
+	private String name;
+	public final String getName() {
+		return name ;
+	}
+	public final void setName(String name) {
+		this .name = name;
+	}
+}
+```
+
+@Value的作用是通过注解将常量、配置文件中的值、其他bean的属性值注入到变量中，作为变量的初始值。
+
+**(1)常量注入**
+
+```java
+  @Value("normal")
+  private String normal; // 注入普通字符串
+  @Value("classpath:com/hry/spring/configinject/config.txt")
+  private Resource resourceFile; // 注入文件资源
+  @Value("http://www.baidu.com")
+  private Resource testUrl; // 注入URL资源
+```
+
+ 
+
+**(2)bean属性、系统属性、表达式注入@Value("#{}")**
+
+bean属性注入需要注入者和被注入者属于同一个IOC容器，或者父子IOC容器关系，在同一个作用域内。
+
+```java
+@Value("#{beanInject.another}")
+private String fromAnotherBean; // 注入其他Bean属性：注入beanInject对象的属性another，类具体定义见下面
+@Value("#{systemProperties['os.name']}")
+private String systemPropertiesName; // 注入操作系统属性
+@Value("#{ T(java.lang.Math).random() * 100.0 }")
+private double randomNumber; //注入表达式结果
+```
+
+ 
+
+**（3）配置文件属性注入@Value("${}")**
+
+@Value("#{}")读取配置文件中的值，注入到变量中去。配置文件分为默认配置文件application.properties和自定义配置文件
+
+```java
+•application.properties  //application.properties在spring boot启动时默认加载此文件
+```
+
+•自定义属性文件。自定义属性文件通过@PropertySource加载。@PropertySource可以同时加载多个文件，也可以加载单个文件。如果相同第一个属性文件和第二属性文件存在相同key，则最后一个属性文件里的key启作用。加载文件的路径也可以配置变量，如下文的${anotherfile.configinject}，此值定义在第一个属性文件config.properties
+
+第一个属性文件config.properties内容如下： 
+
+```java
+${anotherfile.configinject} //作为第二个属性文件加载路径的变量值
+book.name=bookName
+**anotherfile.configinject**=placeholder
+```
+
+第二个属性文件config_placeholder.properties内容如下：
+
+```java
+book.name.placeholder=bookNamePlaceholder
+```
+
+下面通过@Value(“${app.name}”)语法将属性文件的值注入bean属性值，详细代码见：            
+
+```java
+@Component
+// 引入自定义配置文件。
+@PropertySource({"classpath:com/hry/spring/configinject/config.properties",
+ // 引入自定义配置文件。${anotherfile.configinject}则是config.properties文件中的第二个属性值，会被替换为config_placeholder.properties。
+  "classpath:com/hry/spring/configinject/config_**${anotherfile.configinject}**.properties"})
+public class ConfigurationFileInject{
+  @Value("${app.name}")
+  private String appName; // 这里的值来自application.properties，spring boot启动时默认加载此文件
+  @Value("${book.name}")
+  private String bookName; // 注入第一个配置文件config.properties的第一个属性
+  @Value("${book.name.placeholder}")
+  private String bookNamePlaceholder; // 注入第二个配置外部文件属性
+}
+```
 
 
+
+## @SpringBootApplication
+
+@SpringBootApplication是Sprnig Boot项目的核心注解，目的是开启自动配置
+
+spingboot建议的目录结果如下：
+
+root package结构：com.example.myproject
+
+1、Application. java 建议放到跟目录下面,主要用于做一些框架配置。
+		2、domain目录主要用于实体(Entity) 与数据访问层(Repository)。
+		3、service 层主要是业务类代码。
+		4、controller 负责页面访问控制。
+
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+      @Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+public @interface SpringBootApplication {
+    //@SpringBootApplication的作用等价于同时组合使用@EnableAutoConfiguration，@ComponentScan，@SpringBootConfiguration．
+}
+```
+
+## @SpringBootConfiguration
+
+继承自@Configuration，二者功能也一致，标注当前类是配置类,并会将当前类内声明的一个或多个以@Bean注解标记的方法的实例纳入到spring容器中，并且实例名就是方法名。
+
+@SpringBootConfiguration注释是一个类级别的注释，它指示此类提供了应用程序配置。通常，具有main（）方法的类最适合此注释。我们通常使用@SpringBootApplication批注，该批注会自动继承@SpringBootConfiguration批注。
+
+## @EnableAutoConfiguration
+
+`@EnableAutoConfiguration`是`springboot`实现自动化配置的核心注解，通过这个注解把spring应用所需的bean注入容器中．`@EnableAutoConfiguration`源码通过`@Import`注入了一个`ImportSelector`的实现类`AutoConfigurationImportSelector`,这个`ImportSelector`最终实现根据我们的配置，动态加载所需的bean.
+
+springboot是通过注解`@EnableAutoConfiguration`的方式，去查找，过滤，加载所需的`configuration`,`@ComponentScan`扫描我们自定义的bean,`@SpringBootConfiguration`使得被`@SpringBootApplication`注解的类声明为注解类．因此`@SpringBootApplication`的作用等价于同时组合使用`@EnableAutoConfiguration`，`@ComponentScan`，`@SpringBootConfiguration`．
+
+`@EnableAutoConfiguration `简单概括一下就是，**借助@Import的支持，收集和注册特定场景相关的bean定义**。
+
+- @EnableScheduling是通过@Import将Spring调度框架相关的bean定义都加载到IoC容器。
+- @EnableMBeanExport是通过@Import将JMX相关的bean定义加载到IoC容器。
+- `@EnableAutoConfiguration`也是借助@Import的帮助，将所有符合自动配置条件的bean定义加载到IoC容器
+
+```java
+@Override
+   //annotationMetadata 是＠import所用在的注解．这里指定是@EnableAutoConfiguration
+public String[] selectImports(AnnotationMetadata annotationMetadata) {
+    if (!isEnabled(annotationMetadata)) {
+        return NO_IMPORTS;
+    }
+     //加载XXConfiguration的元数据信息（包含了某些类被生成bean条件），继续跟进这个方法调用，就会发现加载的是：spring-boot-autoconfigure　jar包里面META-INF的spring-autoconfigure-metadata.properties
+    AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
+            .loadMetadata(this.beanClassLoader);
+　　    //获取注解里设置的属性，在＠SpringBootApplication设置的exclude,excludeＮame属性值，其实就是设置＠EnableAutoConfiguration的这两个属性值
+       AnnotationAttributes attributes = getAttributes(annotationMetadata);
+       //从spring-boot-autoconfigure　jar包里面META-INF/spring.factories加载配置类的名称，打开这个文件发现里面包含了springboot框架提供的所有配置类
+    List<String> configurations = getCandidateConfigurations(annotationMetadata,
+            attributes);
+     //去掉重复项
+    configurations = removeDuplicates(configurations);
+     //获取自己配置不需要生成bean的class
+    Set<String> exclusions = getExclusions(annotationMetadata, attributes);
+    //校验被exclude的类是否都是springboot自动化配置里的类，如果存在抛出异常
+    checkExcludedClasses(configurations, exclusions);
+   //删除被exclude掉的类
+    configurations.removeAll(exclusions);
+   //过滤刷选，满足OnClassCondition的类
+    configurations = filter(configurations, autoConfigurationMetadata);
+    fireAutoConfigurationImportEvents(configurations, exclusions);
+//返回需要注入的bean的类路径
+    return StringUtils.toStringArray(configurations);
+}
+```
+
+
+
+## @RestController
+
+作用等同于@Controller + @ResponseBody
+
+1) 如果只是使用@RestController注解Controller类，则Controller中的方法无法返回jsp页面，或者html，配置的视图解析器 InternalResourceViewResolver不起作用，返回的内容就是Return 里的内容。
+2) @Controller，视图解析器InternalResourceViewResolver可以解析return 的jsp,html页面，并且跳转到相应页面。
+3) @ResponseBody，使用此标签后，不会解析并跳转页面，而是返回JSON，XML或自定义mediaType内容到页面。
+
+
+
+## @ResponseBody
+
+表示方法的返回值直接以指定的格式写入Http response body中，而不是解析为跳转路径。式的转换是通过HttpMessageConverter中的方法实现的，因为它是一个接口，因此由其实现类完成转换。如果要求方法返回的是json格式数据，而不是跳转页面，可以直接在类上标注@RestController，而不用在每个方法中标注@ResponseBody。
+
+[点击查看详情]: https://blog.csdn.net/originations/article/details/89492884
+
+
+
+## @Controller
+
+@RestController = @Controller + @ResponseBody
+
+在一个类上添加@Controller注解，表明了这个类是一个控制器类。负责处理由DispatcherServlet 分发的请求，它把用户请求的数据经过业务处理层处理之后封装成一个Model ，然后再把该Model 返回给对应的View 进行展示。
+
+使用@RequestMapping 和@RequestParam 等一些注解用以定义URL 请求和Controller 方法之间的映射，这样的Controller 就能被外界访问到。
+
+@Controller 只是定义了一个控制器类，而使用@RequestMapping 注解的方法才是真正处理请求的处理器。
+
+@Controller必须配合模版来使用。
+
+返回的是一个页面，如果想返回的是String数据则使用**@RestController**
+
+[详细点击查看链接]: https://www.cnblogs.com/xiepeixing/p/4243288.htm
+
+
+
+## @RequestMapping
+
+@RequestMapping注解是用来映射请求的，即指明处理器可以处理哪些URL请求，该注解既可以用在类上，也可以用在方法上。
+
+当使用@RequestMapping标记控制器类时，方法的请求地址是相对类的请求地址而言的；当没有使用@RequestMapping标记类时，方法的请求地址是绝对路径。
+
+@RequestMapping的地址可以是uri变量，并且通过@PathVariable注解获取作为方法的参数。
+
+当@RequestMapping 标记在Controller 类上的时候，里面使用@RequestMapping 标记的方法的请求地址都是相对于类上的@RequestMapping 而言的；当Controller 类上没有标记@RequestMapping 注解时，方法上的@RequestMapping 都是绝对路径。这种绝对路径和相对路径所组合成的最终路径都是相对于根路径“/ ”而言的。
+
+```java
+//在控制器上加了@RequestMapping 注解，所以当需要访问到里面使用了@RequestMapping 标记的方法showView() 的时候就需要使用showView 方法上@RequestMapping 相对于控制器MyController上@RequestMapping 的地址，即/test/showView.do 。
+@Controller
+@RequestMapping ( "/test" )
+public class MyController {
+    @RequestMapping ( "/showView" )
+    public ModelAndView showView() {
+       ModelAndView modelAndView = new ModelAndView();
+       modelAndView.setViewName( "viewName" );
+       modelAndView.addObject( " 需要放到 model 中的属性名称 " , " 对应的属性值，它是一个对象 " );
+       return modelAndView;
+    }
+
+} 
+
+```
+
+[详细点击查看链接]: https://www.cnblogs.com/xiepeixing/p/4243288.htm
+
+
+
+## @ComponentScan
+
+自动扫描组件，该注解默认会扫描该类所在的包下所有的配置类，相当于之前的 <context:component-scan>。
+
+属性解释：
+
+basePackageClasses：对basepackages()指定扫描注释组件包类型安全的替代。
+
+excludeFilters：指定不适合组件扫描的类型。
+
+includeFilters：指定哪些类型有资格用于组件扫描。
+
+lazyInit：指定是否应注册扫描的beans为lazy初始化。
+
+nameGenerator：用于在Spring容器中的检测到的组件命名。
+
+resourcePattern：控制可用于组件检测的类文件。
+
+scopedProxy：指出代理是否应该对检测元件产生，在使用过程中会在代理风格时尚的范围是必要的。
+
+scopeResolver：用于解决检测到的组件的范围。
+
+useDefaultFilters：指示是否自动检测类的注释 
+
+```java
+@ComponentScan(value = "io.mieux.controller")  //注解中指定了要扫描的包
+
+@ComponentScan(value = "io.mieux", excludeFilters = {@Filter(type = FilterType.ANNOTATION, value = {Controller.class})}) //excludeFilters 的参数是一个 Filter[] 数组，然后指定 FilterType 的类型为 ANNOTATION，也就是通过注解来过滤，最后的 value 则是Controller 注解类。配置之后，在 spring 扫描的时候，就会跳过 io.mieux 包下，所有被 @Controller 注解标注的类。
+
+@ComponentScan(value = "io.mieux", includeFilters = {@Filter(type = FilterType.ANNOTATION, classes = {Controller.class})}) //使用 includeFilters 来按照规则只包含某些包的扫描。
+
+@ComponentScan(value = "io.mieux", includeFilters = {@Filter(type = FilterType.ANNOTATION, classes = {Controller.class})},useDefaultFilters = false) //useDefaultFilters 属性的用法，该属性默认值为 true，也就是说 spring 默认会自动发现被 @Component、@Repository、@Service 和 @Controller 标注的类，并注册进容器中。要达到只包含某些包的扫描效果，就必须将这个默认行为给禁用掉（在 @ComponentScan 中将 useDefaultFilters 设为 false 即可）。
+
+@ComponentScan(value = "io.mieux.controller")
+@ComponentScan(value = "io.mieux.service")
+@Configuration
+public class BeanConfig {
+//如果使用的 jdk8，则可以直接添加多个 @ComponentScan 来添加多个扫描规则，但是在配置类中要加上 @Configuration 注解，否则无效。
+}
+
+@ComponentScans(value = 
+        {@ComponentScan(value = "io.mieux.controller"),
+        @ComponentScan(value = "io.mieux.service")})
+@Configuration
+public class BeanConfig {
+// 也可以使用 @ComponentScans 来添加多个 @ComponentScan，从而实现添加多个扫描规则。同样，也需要加上 @Configuration 注解，否则无效。
+}
+--------------------------------------------------------------------------
+//自定义过滤规则
+    //在前面使用过 @Filter 注解，里面的 type 属性是一个 FilterType 的枚举类型：
+    public enum FilterType {
+    	ANNOTATION,ASSIGNABLE_TYPE,ASPECTJ,REGEX,CUSTOM
+	}
+	//使用 CUSTOM 类型，就可以实现自定义过滤规则。
+//1、 首先创建一个实现 TypeFilter 接口的 CustomTypeFilter 类，并实现其 match 方法。
+public class CustomTypeFilter implements TypeFilter {
+    @Override
+    public boolean match(MetadataReader metadataReader,
+                         MetadataReaderFactory metadataReaderFactory) throws IOException {
+        // 获取当前扫描到的类的注解元数据
+        AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
+        // 获取当前扫描到的类的元数据
+        ClassMetadata classMetadata = metadataReader.getClassMetadata();
+        // 获取当前扫描到的类的资源信息
+        Resource resource = metadataReader.getResource();
+        if (classMetadata.getClassName().contains("Co")) {
+            return true;
+        }
+        return false;
+    }
+}
+//2、对 BeanConfig 进行修改，指定过滤类型为 Custom 类型，并指定 value 为 CustomTypeFilter.class。
+@ComponentScan(value = "io.mieux",
+        includeFilters = {@ComponentScan.Filter(type = FilterType.CUSTOM, value = {CustomTypeFilter.class})},
+        useDefaultFilters = false)
+public class BeanConfig {
+
+}
+```
+
+## @Target
+
+@Target用来表示注解作用范围，超过这个作用范围，编译的时候就会报错。
+
+@Target通过ElementType来指定注解可使用范围的枚举集合，枚举集合如下 
+
+```java
+@Target(ElementType.TYPE)——接口、类、枚举、注解
+@Target(ElementType.FIELD)——字段、枚举的常量可用于域上
+@Target(ElementType.METHOD)——方法
+@Target(ElementType.PARAMETER)——方法参数
+@Target(ElementType.CONSTRUCTOR) ——构造函数
+@Target(ElementType.LOCAL_VARIABLE)——局部变量
+@Target(ElementType.ANNOTATION_TYPE)——注解
+@Target(ElementType.PACKAGE)——包 用于记录java文件的package信息
+```
+
+
+
+## 四大元注解
+
+ 1.@Target,2.@Retention,3.@Documented,4.@Inherited
+
+## @Retention
+
+@Retention定义了该Annotation被保留的时间长短。
+
+@Retenrion通过RetebtionPolicy表示需要在什么级别保存该注释信息，用于描述注解的生命周期（即：被描述的注解在什么范围内有效）。
+
+| 取值    | 有效范围                         |
+| ------- | -------------------------------- |
+| SOURCE  | 在源文件中有效（即源文件保留）   |
+| CLASS   | 在class文件中有效（即class保留） |
+| RUNTIMR | 在运行时有效（即运行时保留）     |
+
+Demo:
+
+@Retention(RetentionPolicy.SOURCE)	   :这种类型的Annotations只在源代码级别保留,编译时就会被忽略,在class字节码文件中不包含。
+		@Retention(RetentionPolicy.CLASS)		  :这种类型的Annotations编译时被保留,默认的保留策略,在class文件中存在,但JVM将会忽略,运行时无法获得。
+		@Retention(RetentionPolicy.RUNTIME)	:这种类型的Annotations将被JVM保留,所以他们能在运行时被JVM或其他使用反射机制的代码所读取和使用。
+
+## @Documented
+
+Documented注解表明这个注释是由 javadoc记录的，在默认情况下也有类似的记录工具。 如果一个类型声明被注释了文档化，它的注释成为公共API的一部分
+
+## @Inherited
+
+说明子类可以继承父类中的该注解
+
+## @EnableBatchProcessing
+
+和spring 家庭中的@Enable* 系列注解功能很类似。顾名思义，就是让我们可以运行Spring Batch。在配置类上打上这个注解，spring 会自动 帮我们生成一系列与spring batch 运行有关的bean，并交给spring容器管理，而当我们需要这些beans时，只需要用一个@autowired就可以实现注入了。
+
+自动生成的bean及名称如下：
+
+```java
+JobRepository - bean name "jobRepository"
+JobLauncher - bean name "jobLauncher"
+JobRegistry - bean name "jobRegistry"
+PlatformTransactionManager - bean name "transactionManager"
+JobBuilderFactory - bean name "jobBuilders"
+```
+
+```java
+@Configuration
+@EnableBatchProcessing
+public class BatchConfig02 {
+@Autowired
+private JobBuilderFactory jobBuilderFactory;  //使用了@EnableBatchProcessing注解，直接使用bean对象
+@Autowired
+private StepBuilderFactory stepBuilderFactory; //使用了@EnableBatchProcessing注解，直接使用bean对象
+}
+```
+
+@EnableBatchProcessing 背后所调用的接口是BatchConfigurer。这个接口的代码如下：
+
+```java
+ public interface BatchConfigurer {
+	JobRepository getJobRepository() throws Exception;
+	PlatformTransactionManager getTransactionManager() throws Exception;
+	JobLauncher getJobLauncher() throws Exception;
+	JobExplorer getJobExplorer() throws Exception;
+}
+```
+
+我们可以自定义一个实现 BatchConfigurer 接口的类，重写相应的方法，在里面改变返回的对象。
+
+但更常见的情况是，我们重写 DefaultBatchConfigurer 里面的若干方法来实现自身需求。
+
+DefaultBatchConfigurer 是spring batch 提供的 BatchConfigurer 接口的默认实现类，即默认情况下，@EnableBatchProcessing注解所生成的对象，都是在 DefaultBatchConfigurer 中进行配置了的。
+
+所以，我们可以在 DefaultBatchConfigurer 的基础上进行重写，这其实可以满足我们的大部分需求，如：
+
+```java
+//只重写获取 transactionManager 的方法
+@Bean
+public BatchConfigurer batchConfigurer() {
+    return new DefaultBatchConfigurer() {
+        @Override
+        public PlatformTransactionManager getTransactionManager() {
+            return new MyTransactionManager();
+        }
+    };
+}
+```
+
+
+
+## @SkyArkApplication  天舟
 

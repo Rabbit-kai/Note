@@ -1,7 +1,7 @@
 package com.company;
 
 
-class Student implements Comparable<Student>{
+class Student implements Comparable<Student>,Cloneable{
     private int no;
     private String name;
     private int classs;
@@ -57,6 +57,9 @@ class Student implements Comparable<Student>{
         }
     }
 
-
+    @Override
+    public Student clone() throws CloneNotSupportedException {
+        return (Student)super.clone();
+    }
 
 }
