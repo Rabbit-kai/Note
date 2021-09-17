@@ -22,7 +22,7 @@ a只能调用子类和父类公有的方法和变量，无法调用子类中单�
 
 
 
-# lambda表达式（lambda expressions）
+# lambda表达式
 
 ## 基本语法
 
