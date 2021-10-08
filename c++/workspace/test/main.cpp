@@ -9,9 +9,11 @@ int main() {
     // 取地址符
     baseTest c ;
     int a = 100;
-    c.add(a);
-    cout<<("处理后的a值："+to_string(a))<<endl;
-    c.vectors();
+//    c.add(a);
+//    cout<<("处理后的a值："+to_string(a))<<endl;
+//    c.vectors();
+
+    c.reference();
     return 0;
 }
 

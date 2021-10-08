@@ -13,6 +13,7 @@ class baseTest {
 public:
     void add(int &a);
     void vectors();
+    void reference();
 };
 
 
