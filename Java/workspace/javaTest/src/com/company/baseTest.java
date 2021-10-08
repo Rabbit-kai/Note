@@ -2,10 +2,34 @@ package com.company;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class baseTest {
+
+    public static void base(){
+        //String 传值 传址
+        String a = "hello";
+        String b = "hello";
+//        a = "Hello Java";
+
+        System.out.println("a:: "+a);
+        System.out.println("b:: "+b);
+        System.out.println(a==b);
+        System.out.println(a.equals(b));
+
+        //对象 传址
+        List<Student> list = new LinkedList<>();
+        Student stu = new Student(1, "Aa",'1');
+        list.add(stu);
+        System.out.println("before:"+list);
+        stu.setName("Bb");
+        System.out.println("list:" + list.get(0).getName());
+        System.out.println("after:"+list);
+
+    }
+
 
     public static void stream(){
         List<String> strings = Arrays.asList("abc", "", "bc", "efg", "abcd","", "jkl","abc","abd","bcd","bed");
@@ -23,9 +47,12 @@ public class baseTest {
                     }
                 }
         ).collect(Collectors.toList()));
-
+        //装成list  转成set： toSet()  转为map：toMap(Student::getName, Student::getAge)
         System.out.println("after->filter-> Collectors.toList(): " + strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList()));
+        //字符串分隔符连接
         System.out.println("after->filter-> Collectors.joining : " + strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.joining("||")));
+
+
         System.out.println("after->filter-> Collectors.toList()-> forEach: ");
         strings.stream().filter(string -> !string.isEmpty()).collect(Collectors.toList()).forEach(string->System.out.print("  "+string));
         System.out.println();
@@ -81,6 +108,91 @@ public class baseTest {
          * 输出 a b c 1 2 2
          */
 
+        /*
+         * 聚合操作  当返回值为Optional类型时，需要用get()来获取返回值中的数据入 maxBy minBy reduce
+         * 1.Collectors.counting() 计数
+         * 2.maxBy() minBy()最大最小
+         * 3.summingInt()/summingLong()/summingDouble() 求和功能
+         * 4.averagingDouble()/averagingInt()/averagingLong() 求平均值
+         * 5.groupingBy() 分组group by
+         * 6.collect(Collectors.groupingBy(Student::getType, Collectors.groupingBy(Student::getAge)))
+         * 7.partitioningBy(v -> v.getAge() > 10) 根据条件分区，分成多个部分
+         * 8.reducing(Integer::sum) 规约  collectors下为reducing，stream中为reduce
+         *   reduce(accumulator)
+         *   reduce(identity,accumulator)
+         *   reduce(identity,accumulator,combiner)  //dentity是reduce进行迭代操作的初始值。accumulator是用来迭代的。combiner是并发时用来合并各线程结果的
+         *
+         * */
+
+        /**
+         * reduce三种形态
+         * 1、Optional accResult = Stream.of(1, 2, 3, 4).reduce((acc, item) -> acc + item)  //这个方法返回值类型是Optiona
+         */
+        //拆分解释：
+        System.out.println("-----------reduce第一种----------------");
+
+        Optional accResult = Stream.of(1, 2, 3, 4)
+                .reduce((acc, item) -> {
+                    System.out.println("每次循环的初始值(上次计算后的结果值)：acc : "  + acc);
+                    acc += item;
+                    System.out.println("本次循环的元素item: " + item);
+                    System.out.println("acc+ : "  + acc);
+                    System.out.println("--------");
+                    return acc;
+                });
+        System.out.println("accResult: " + accResult.get());
+        System.out.println("---------------------------");
+
+        /**
+         * 第二种会接受一个identity参数，用来指定Stream循环的初始值。如果Stream为空，就直接返回该值。另一方面，该方法不会返回Optional，因为该方法不会出现null。
+         * 2、int accResult = Stream.of(1, 2, 3, 4).reduce(100,(acc, item) -> acc + item)
+         */
+        System.out.println("accResult: " + accResult.get());
+
+        Stream.of(1, 2, 3, 4)
+                .reduce(0, (acc, item) -> {
+                    System.out.println("acc : "  + acc);
+                    acc += item;
+                    System.out.println("item: " + item);
+                    System.out.println("acc+ : "  + acc);
+                    System.out.println("--------");
+                    return acc;
+                });
+
+        /**
+         * 第三种 第三个参数是在并行执行时使用
+         * 3、int d = Stream.of(2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(1, (acc, x) -> acc + x, (x, y) -> x + y - 1);
+         */
+        System.out.println(Stream.of(1, 2, 3, 4).reduce(100, (sum, item) -> sum + item));
+        int b = Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(0, (acc, x) -> acc + x);
+        int c = Stream.of(2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(1, (acc, x) -> acc + x);
+        int d = Stream.of(2, 3, 4, 5, 6, 7, 8, 9).parallel().reduce(1, (acc, x) -> acc + x, (x, y) -> x + y - 1);
+        System.out.printf("初始值个数不影响结果：%d\n", b);
+        System.out.printf("无修正:%d\n", c);
+        System.out.printf("合并修正:%d\n", d);
+
+
+        /**
+         * map
+         */
+        List<String> list1 = Arrays.asList("a,b,c", "1,2,3");
+
+        //将一个String类型的Stream对象中的每个元素添加相同的后缀.txt，如a变成a.txt
+        Stream<String> s = Stream.of("test", "t1", "t2", "teeeee", "aaaa");
+        s.map(n -> n.concat(".txt")).forEach(System.out::println);
+
+        Stream<String> s3 = list1.stream().flatMap(ss -> {
+            //将每个元素转换成一个stream(stream中有多个元素)
+            String[] split = ss.split(",");
+            Stream<String> s2 = Arrays.stream(split);
+            return s2;
+        });
+        s3.forEach(System.out::println);
+
+
+
+
+
     }
 
 
@@ -97,6 +209,11 @@ public class baseTest {
         //当非基本类型赋值为null时，会报空指针，new了空对象时不会。
         List<Student> a = null;
 //        System.out.println(a.get(0).getName());
+
+        List<Student> list = students();
+
+
+
     }
 
     public static void OptionalTest(Student stu) {
@@ -129,16 +246,31 @@ public class baseTest {
         list.add(new Student(7, "asdasfaf", 1));
         list.add(new Student(1, "asdasfaf", 1));
         list.add(new Student(87, "asdasfaf", 1));
+
+        Collections.sort(list);
+        for (Student li:list){
+//            System.out.println("no:: " + li.getNo() + "   name:: " + li.getName());
+        }
+
+        Comparator<Student> comparing = Comparator.comparing(Student::getName);
+
+
         return list;
     }
 
 
-    public static void commpara(){
+    public static void compara(){
         // write your code here
         List<Student> list = students();
+//        Collections.sort();
+//        Collectors
+//        Comparator
+//        Collection
+//        Collector
+//        Comparable
 
         // 排序：先按名称排序，再按学号排序
-//        Collections.sort(list);  对自定义类使用时，如果没有对该类实现Comparable接口，否则报错
+//        Collections.sort(list);  对自定义类使用时，如果没有对该类实现Comparable接口，否则报错,入参：class::function
         list.sort(Comparator.comparing(Student::getName).thenComparing(Student::getNo));
         for (Student stu : list) {
             System.out.println("排序后list：" + stu.getName() + "      " + stu.getNo());
@@ -166,4 +298,24 @@ public class baseTest {
 //        int index = Collections.binarySearch(list.sort());
 //        System.out.println(index);
     }
+
+    public static void clonetest() throws CloneNotSupportedException {
+        /**
+         *① 实现Cloneable接口，这是一个标记接口，自身没有方法。
+         *② 覆盖clone()方法，可见性提升为public。
+         */
+        Student stu = new Student(1, "Aa",'1');
+
+        Student stu1 = stu.clone();
+        System.out.println(stu);
+        System.out.println(stu1);
+        System.out.println(stu);
+        System.out.println(stu.getName());
+        System.out.println(stu1);
+        System.out.println(stu1.getName());
+
+
+    }
+
+
 }
