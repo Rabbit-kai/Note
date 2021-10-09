@@ -28,6 +28,16 @@ public class baseTest {
         System.out.println("list:" + list.get(0).getName());
         System.out.println("after:"+list);
 
+        List<Student> list1 = tran(list);
+        list1.get(0).setName("Cc");
+
+        System.out.println("after list1 update list is :" + list.get(0).getName());
+
+
+
+    }
+    public static List<Student> tran(List s){
+        return s;
     }
 
 
@@ -206,6 +216,7 @@ public class baseTest {
         if (li.isEmpty()){
             System.out.println("空list111");
         }
+        li.add(new Student());
         //当非基本类型赋值为null时，会报空指针，new了空对象时不会。
         List<Student> a = null;
 //        System.out.println(a.get(0).getName());
@@ -247,12 +258,26 @@ public class baseTest {
         list.add(new Student(1, "asdasfaf", 1));
         list.add(new Student(87, "asdasfaf", 1));
 
-        Collections.sort(list);
+
+        list.sort(new Comparator<Student>() {
+            @Override
+            public int compare(Student o1, Student o2) {
+                if(o1.getNo() > o2.getNo()){
+                    return -1;
+                }else if (o1.getNo() == o2.getNo()) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+        });
+
+//        Collections.sort(list);
         for (Student li:list){
-//            System.out.println("no:: " + li.getNo() + "   name:: " + li.getName());
+            System.out.println("no:: " + li.getNo() + "   name:: " + li.getName());
         }
 
-        Comparator<Student> comparing = Comparator.comparing(Student::getName);
+//        Comparator<Student> comparing = Comparator.comparing(Student::getName);
 
 
         return list;
@@ -307,13 +332,15 @@ public class baseTest {
         Student stu = new Student(1, "Aa",'1');
 
         Student stu1 = stu.clone();
-        System.out.println(stu);
-        System.out.println(stu1);
-        System.out.println(stu);
-        System.out.println(stu.getName());
-        System.out.println(stu1);
-        System.out.println(stu1.getName());
 
+        System.out.println(stu);
+        System.out.println("原始stu："+stu.getName());
+        System.out.println(stu1);
+        System.out.println("克隆体stu1："+stu1.getName());
+
+        stu.setName("AAAA");
+        System.out.println("clone后修改name的原始stu："+stu.getName());
+        System.out.println("clone后修改name的克隆体stu1："+stu1.getName());
 
     }
 
