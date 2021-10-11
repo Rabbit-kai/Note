@@ -29,7 +29,7 @@ void baseTest::reference() {
     int &d = *p5;
 //    int *p6 = 0;
 //    int &f = *p6; //这种赋值方式是错误的
-    int * &p4 = &b;//这是可以的，&b为地址
+    int * &p4 = p5;//这是可以的，一个指向指针的指针
 
 
 
